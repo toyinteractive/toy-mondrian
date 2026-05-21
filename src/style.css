@@ -1534,12 +1534,10 @@ body {
   display: none;
 }
 
-@media (max-width: 1280px) and (orientation: portrait), (max-width: 1280px) and (orientation: landscape) {
-  .download-modal-option-hint--desktop {
-    display: none;
-  }
+.download-modal--mobile-device .download-modal-option-hint--desktop {
+  display: none;
+}
 
-  .download-modal-option-hint--mobile {
-    display: block;
-  }
+.download-modal--mobile-device .download-modal-option-hint--mobile {
+  display: block;
 }

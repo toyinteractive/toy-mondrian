@@ -1,3 +1,5 @@
+import { isMobileDevice } from './save-image';
+
 type DownloadModalOptions = {
   onDownloadImage: () => void | Promise<void>;
   onDownloadVector: () => void | Promise<void>;
@@ -101,6 +103,7 @@ export function createDownloadModal(host: HTMLElement, options: DownloadModalOpt
 
   const open = (): void => {
     previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialog.classList.toggle('download-modal--mobile-device', isMobileDevice());
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     (imageButton ?? closeButton)?.focus();
