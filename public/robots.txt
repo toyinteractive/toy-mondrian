@@ -12,4 +12,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://toy-mondrian.vercel.app/sitemap.xml
+Sitemap: https://mondrian.amrit.art/sitemap.xml
