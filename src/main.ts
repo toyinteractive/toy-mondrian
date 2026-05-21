@@ -11,6 +11,7 @@ import { createDownloadModal } from './ui/download-modal';
 import { exportVectorArtFromGameState } from './ui/gallery-export';
 import { setupHud, updateHud } from './ui/hud';
 import { createBrandLogo } from './ui/brand-logo';
+import { createConfettiOverlay } from './ui/confetti';
 import { createLandingPage } from './ui/landing';
 import { applySfxForTransition, createSfxController } from './audio/sfx';
 
@@ -79,6 +80,7 @@ async function bootstrap(): Promise<void> {
   layoutObserver.observe(sidebarContainer);
   const runtime = new EngineRuntime({ seed: randomSeed() });
   const sfx = createSfxController();
+  const confetti = createConfettiOverlay(document.body);
   sfx.installUnlockHandlers();
 
   let latestState: GameState | null = null;
@@ -134,6 +136,7 @@ async function bootstrap(): Promise<void> {
       downloadModal.open();
     },
     onRestart: () => {
+      confetti.stop();
       runtime.restart(randomSeed());
     },
   });
@@ -145,6 +148,9 @@ async function bootstrap(): Promise<void> {
   runtime.onSnapshot((state) => {
     if (previousSnapshot) {
       applySfxForTransition(previousSnapshot, state, sfx);
+      if (previousSnapshot.phase !== GamePhase.GalleryClosed && state.phase === GamePhase.GalleryClosed) {
+        confetti.burst();
+      }
     }
     latestState = state;
     previousSnapshot = state;
