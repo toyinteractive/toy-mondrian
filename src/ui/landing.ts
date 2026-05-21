@@ -1,8 +1,8 @@
 import { createBrandLogo } from './brand-logo';
 
 const FADE_MS = 500;
-/** Fallback if animationend does not fire (morph delay 5.35s + 1.05s). */
-const LOGO_INTRO_FALLBACK_MS = 6450;
+/** Fallback if animationend does not fire (logo delay 3s + 1.05s spin). */
+const LOGO_INTRO_FALLBACK_MS = 4200;
 
 const ORCHESTRATED_INTRO_MEDIA =
   '(min-width: 1281px), (max-width: 1280px) and (orientation: landscape), (max-width: 1280px) and (orientation: portrait)';

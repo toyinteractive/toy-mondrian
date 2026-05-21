@@ -743,20 +743,34 @@ body {
     transition: none;
   }
 
-  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--mondrian {
+  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--amrit {
     opacity: 0;
-    transform: scale(0.85) rotate(6deg);
   }
 
-  /* After intro: freeze final frame, then enable hover transitions next frame */
+  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--mondrian {
+    opacity: 0;
+    transform: scale(0.9) rotate(0deg);
+  }
+
+  /* After intro: Mondrian settled; Amrit hidden until hover crossfade */
   .landing--logo-intro-done .landing-animate-item--logo {
     animation: none;
-    transform: rotate(0deg);
+    transform: none;
   }
 
   .landing--logo-intro-done .landing-animate-item--logo .brand-logo-img {
     animation: none;
     transition: none;
+  }
+
+  .landing--logo-intro-done .landing-animate-item--logo .brand-logo-img--mondrian {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  .landing--logo-intro-done .landing-animate-item--logo .brand-logo-img--amrit {
+    opacity: 0;
+    transform: scale(0.85) rotate(6deg);
   }
 
   .landing--logo-hover-ready .landing-animate-item--logo .brand-logo-img {
@@ -813,63 +827,25 @@ body {
     }
   }
 
-  @keyframes landing-logo-spin {
-    0% {
-      opacity: 0;
-      transform: rotate(0deg);
-    }
-
-    14% {
-      opacity: 1;
-    }
-
-    100% {
-      opacity: 1;
-      transform: rotate(360deg);
-    }
-  }
-
-  /* Amrit: hold through spin, crossfade out while Mondrian comes in */
-  @keyframes landing-logo-amrit-intro {
-    0%,
-    50% {
-      opacity: 1;
-      transform: scale(1) rotate(0deg);
-    }
-
-    100% {
-      opacity: 0;
-      transform: scale(0.85) rotate(6deg);
-    }
-  }
-
   @keyframes landing-logo-mondrian-in {
     from {
       opacity: 0;
-      transform: scale(0.85) rotate(0deg);
+      transform: scale(0.9) rotate(0deg);
     }
 
     to {
       opacity: 1;
-      transform: scale(1) rotate(-360deg);
+      transform: scale(1) rotate(360deg);
     }
   }
 
-  /* Footer (up) + logo (spin as Amrit, then morph to Mondrian) */
+  /* Footer (up) + Mondrian logo (clockwise spin, then settle) */
   .landing--ready .landing-animate-item--footer {
-    animation: landing-slide-from-bottom 1s cubic-bezier(0.33, 1, 0.68, 1) 4.3s both;
-  }
-
-  .landing--ready .landing-animate-item--logo {
-    animation: landing-logo-spin 1.05s cubic-bezier(0.33, 1, 0.68, 1) 4.3s both;
-  }
-
-  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--amrit {
-    animation: landing-logo-amrit-intro 2.1s cubic-bezier(0.34, 1.4, 0.64, 1) 4.3s forwards;
+    animation: landing-slide-from-bottom 1s cubic-bezier(0.33, 1, 0.68, 1) 3s both;
   }
 
   .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--mondrian {
-    animation: landing-logo-mondrian-in 1.05s cubic-bezier(0.33, 1, 0.68, 1) 5.35s forwards;
+    animation: landing-logo-mondrian-in 1.05s cubic-bezier(0.33, 1, 0.68, 1) 3s both;
   }
 }
 
@@ -885,14 +861,14 @@ body {
     animation: landing-slide-from-right 1.6s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
   }
 
-  /* 2 — PLAY (left) + instructions (right), together */
+  /* 2 — PLAY (left) + instructions (right), after hero (~1.6s) */
   .landing--ready .landing-animate-item--play {
-    animation: landing-slide-from-left 1.2s cubic-bezier(0.33, 1, 0.68, 1) 3.05s both;
+    animation: landing-slide-from-left 1.2s cubic-bezier(0.33, 1, 0.68, 1) 1.7s both;
   }
 
   .landing--ready .landing-instructions--desktop.landing-animate-item--instructions,
   .landing--ready .landing-instructions--mobile.landing-animate-item--instructions {
-    animation: landing-slide-from-right 1.2s cubic-bezier(0.33, 1, 0.68, 1) 3.05s both;
+    animation: landing-slide-from-right 1.2s cubic-bezier(0.33, 1, 0.68, 1) 1.7s both;
   }
 }
 
@@ -975,43 +951,35 @@ body {
     animation: landing-portrait-mondrian-blocks-in 1.1s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
   }
 
-  /* 2 — PLAY rises into place on the toy */
+  /* 2 — PLAY rises into place on the toy (after hero ~1.2s) */
   .landing--ready .landing-animate-item--play {
-    animation: landing-portrait-play-rise 0.65s cubic-bezier(0.33, 1, 0.68, 1) 2.25s both;
+    animation: landing-portrait-play-rise 0.65s cubic-bezier(0.33, 1, 0.68, 1) 1.3s both;
   }
 
-  /* 4 — instructions: lines stack up one by one (container stays visible; lines animate) */
+  /* 3 — instructions: lines stack up one by one */
   .landing--ready .landing-instructions--mobile.landing-animate-item--instructions {
     opacity: 1;
   }
 
   .landing--ready .landing-instructions--mobile .landing-instructions-line:nth-child(1) {
-    animation: landing-portrait-instruction-in 0.45s cubic-bezier(0.33, 1, 0.68, 1) 2.45s both;
+    animation: landing-portrait-instruction-in 0.45s cubic-bezier(0.33, 1, 0.68, 1) 1.4s both;
   }
 
   .landing--ready .landing-instructions--mobile .landing-instructions-line:nth-child(2) {
-    animation: landing-portrait-instruction-in 0.45s cubic-bezier(0.33, 1, 0.68, 1) 2.58s both;
+    animation: landing-portrait-instruction-in 0.45s cubic-bezier(0.33, 1, 0.68, 1) 1.53s both;
   }
 
   .landing--ready .landing-instructions--mobile .landing-instructions-line:nth-child(3) {
-    animation: landing-portrait-instruction-in 0.45s cubic-bezier(0.33, 1, 0.68, 1) 2.71s both;
+    animation: landing-portrait-instruction-in 0.45s cubic-bezier(0.33, 1, 0.68, 1) 1.66s both;
   }
 
-  /* 5 — footer + logo (same as desktop, earlier start after shorter portrait beat) */
+  /* 4 — footer + Mondrian logo */
   .landing--ready .landing-animate-item--footer {
-    animation-delay: 3.35s;
-  }
-
-  .landing--ready .landing-animate-item--logo {
-    animation-delay: 3.35s;
-  }
-
-  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--amrit {
-    animation-delay: 3.35s;
+    animation-delay: 2.2s;
   }
 
   .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--mondrian {
-    animation-delay: 4.4s;
+    animation-delay: 2.2s;
   }
 }
 
