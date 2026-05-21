@@ -15,6 +15,7 @@ import { createBrandLogo } from './ui/brand-logo';
 import { createConfettiOverlay } from './ui/confetti';
 import { createLandingPage } from './ui/landing';
 import { setupBylineCursorLogo } from './ui/byline-cursor-logo';
+import { trackEvent } from './analytics';
 import { applySfxForTransition, createSfxController } from './audio/sfx';
 
 function randomSeed(): number {
@@ -156,7 +157,9 @@ async function bootstrap(): Promise<void> {
       sfx.playMove();
     },
     onVolumeToggleMute: () => {
+      const wasMuted = sfx.isMuted();
       const result = sfx.toggleMute();
+      trackEvent(wasMuted ? 'sfx_unmute' : 'sfx_mute');
       if (!result.muted) {
         sfx.playMove();
       }
@@ -166,9 +169,11 @@ async function bootstrap(): Promise<void> {
       if (!latestState || latestState.phase !== GamePhase.GalleryClosed) {
         return;
       }
+      trackEvent('download_open');
       downloadModal.open();
     },
     onRestart: () => {
+      trackEvent('restart');
       confetti.stop();
       runtime.restart(randomSeed());
     },

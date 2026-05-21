@@ -1,3 +1,4 @@
+import { trackEvent } from '../analytics';
 import { createBrandLogo } from './brand-logo';
 
 const FADE_MS = 500;
@@ -212,6 +213,7 @@ export function createLandingPage(options: LandingPageOptions = {}): LandingPage
     if (root.classList.contains('landing--exiting')) {
       return;
     }
+    trackEvent('play');
     playButton.disabled = true;
     options.onPlayPressed?.();
     root.classList.add('landing--exiting');

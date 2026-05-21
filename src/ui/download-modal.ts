@@ -1,3 +1,4 @@
+import { trackEvent } from '../analytics';
 import { isMobileDevice } from './save-image';
 
 type DownloadModalOptions = {
@@ -141,10 +142,12 @@ export function createDownloadModal(host: HTMLElement, options: DownloadModalOpt
   });
 
   imageButton?.addEventListener('click', () => {
+    trackEvent(isMobileDevice() ? 'download_image_share' : 'download_image');
     void runAndClose(options.onDownloadImage);
   });
 
   vectorButton?.addEventListener('click', () => {
+    trackEvent('download_svg');
     void runAndClose(options.onDownloadVector);
   });
 
