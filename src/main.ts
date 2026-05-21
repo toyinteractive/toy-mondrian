@@ -54,7 +54,10 @@ async function bootstrap(): Promise<void> {
   const app = await createPixiApp(canvasContainer);
   canvasContainer.appendChild(app.canvas);
 
+  const scene = new MondrianScene(app, canvasContainer);
+
   const refreshRendererLayout = (): void => {
+    scene.applyLayout();
     app.resize();
   };
   window.addEventListener('resize', refreshRendererLayout);
@@ -63,9 +66,9 @@ async function bootstrap(): Promise<void> {
     window.matchMedia(query).addEventListener('change', refreshRendererLayout);
   }
   const layoutObserver = new ResizeObserver(refreshRendererLayout);
-  layoutObserver.observe(canvasContainer);
+  layoutObserver.observe(appShell);
   layoutObserver.observe(gameLayout);
-  const scene = new MondrianScene(app);
+  layoutObserver.observe(sidebarContainer);
   const runtime = new EngineRuntime({ seed: randomSeed() });
   const sfx = createSfxController();
   sfx.installUnlockHandlers();

@@ -1051,9 +1051,11 @@ body {
 
 @media (max-width: 1280px) and (orientation: landscape) {
   #app {
-    --app-pad-y: 6px;
+    --landscape-outer-frame: clamp(20px, 5.5vmin, 64px);
     --layout-max-width: none;
-    padding: var(--app-pad-y) 10px 26px;
+    --app-pad-y: 0px;
+    padding: 0;
+    background: #111111;
     justify-content: stretch;
     overflow: hidden;
     min-height: 0;
@@ -1064,59 +1066,72 @@ body {
     width: 100%;
     min-height: 0;
     max-height: 100%;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+    align-items: stretch;
+    justify-content: stretch;
+    padding: max(var(--landscape-outer-frame), env(safe-area-inset-top, 0px))
+      max(var(--landscape-outer-frame), env(safe-area-inset-right, 0px)) 0
+      max(var(--landscape-outer-frame), env(safe-area-inset-left, 0px));
+    background: #111111;
+    box-sizing: border-box;
   }
 
   .game-layout {
     --frame-border: 6px;
-    --frame-padding: 6px;
+    --landscape-sidebar-width: clamp(168px, 22vw, 232px);
     --frame-gap: 6px;
     --panel-padding: 6px;
     --download-padding-y: 6px;
     --download-padding-x: 8px;
     --download-font-size: 10px;
-    width: min(100%, calc(100vw - 20px));
+    container-type: size;
+    container-name: game;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--landscape-sidebar-width);
+    grid-template-areas: 'playfield sidebar';
+    align-items: stretch;
+    column-gap: var(--frame-gap);
+    width: 100%;
     height: 100%;
     max-height: 100%;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: minmax(0, 1fr);
-    grid-template-areas: 'canvas sidebar';
-    align-items: stretch;
-    align-content: stretch;
-    column-gap: var(--frame-gap);
-    row-gap: 0;
-    padding: var(--frame-padding);
-    border: var(--frame-border) solid #111111;
-    background: #111111;
-    box-shadow: 12px 12px 0 rgb(0 0 0 / 10%);
-    margin: 0 auto;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: #dcdcdc;
+    box-shadow: none;
+    margin: 0;
     box-sizing: border-box;
   }
 
   .canvas-container {
-    grid-area: canvas;
-    width: auto;
-    height: 100%;
-    max-height: 100%;
-    max-width: 100%;
-    min-height: 0;
-    min-width: 0;
-    aspect-ratio: 1 / 2;
+    grid-area: playfield;
     justify-self: center;
     align-self: stretch;
-    border: 0;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    max-width: 100%;
+    background: #111111;
+    border-style: solid;
+    border-color: #111111;
+    border-width: 0 var(--frame-border);
     box-sizing: border-box;
+    overflow: hidden;
   }
 
   .sidebar {
     display: block;
     grid-area: sidebar;
-    width: clamp(128px, 24vw, 200px);
+    justify-self: stretch;
+    align-self: stretch;
+    width: 100%;
     min-width: 0;
+    max-width: var(--landscape-sidebar-width);
     height: 100%;
+    max-height: 100%;
     min-height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
   .ui-layer {
@@ -1130,13 +1145,15 @@ body {
     flex-direction: column;
     height: 100%;
     min-height: 0;
+    max-height: 100%;
     gap: var(--frame-gap);
+    overflow: hidden;
   }
 
   .hud-panel-score,
   .hud-panel-time {
-    flex: 0 0 auto;
-    min-height: 48px;
+    flex: 0 1 auto;
+    min-height: 40px;
     border: 2px solid #111111;
   }
 
@@ -1149,99 +1166,87 @@ body {
   }
 
   .hud-panel-controls {
-    flex: 1;
+    flex: 1 1 0;
     min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: space-between;
-    gap: 6px;
+    gap: 4px;
     padding: var(--panel-padding);
     border-width: 2px;
     overflow: hidden;
   }
 
   .hud-led-screen {
-    flex: 0 0 auto;
-    min-height: 44px;
-    max-height: 42%;
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
     padding: 6px;
     align-self: stretch;
+    overflow: hidden;
   }
 
   .hud-controls {
     flex: 0 0 auto;
     display: grid;
-    gap: 5px;
+    gap: 4px;
     padding: 0;
   }
 
   .hud-control-button {
     width: 100%;
     height: auto;
-    min-height: 30px;
+    min-height: 28px;
   }
 
   .hud-label {
-    font-size: clamp(11px, 1.8vw, 14px);
+    font-size: clamp(11px, 2.4cqh, 15px);
   }
 
   .hud-value {
-    font-size: clamp(22px, 4vw, 32px);
+    font-size: clamp(20px, 7cqh, 36px);
+  }
+
+  .hud-next-piece-label {
+    font-size: clamp(10px, 2.2cqh, 14px);
+  }
+
+  .hud-led-text {
+    font-size: clamp(8px, 1.8cqh, 11px);
   }
 
   .hud-next-piece-preview {
-    width: 40px;
-    height: 40px;
+    width: clamp(32px, 10cqh, 48px);
+    height: clamp(32px, 10cqh, 48px);
+  }
+
+  .hud-volume-value,
+  .hud-control-label {
+    font-size: clamp(9px, 2cqh, 12px);
   }
 
   .app-byline {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    flex-shrink: 0;
     flex-grow: 0;
-    z-index: 5;
-    padding: 3px 0;
+    z-index: 1;
+    padding: 4px 0;
     font-size: 11px;
   }
 }
 
 @media (max-width: 1280px) and (orientation: landscape) and (max-height: 480px) {
   #app {
-    --app-pad-y: 4px;
-    padding: var(--app-pad-y) 8px 24px;
+    --landscape-outer-frame: clamp(14px, 4.5vmin, 40px);
   }
 
   .game-layout {
-    --frame-border: 4px;
-    --frame-padding: 4px;
     --frame-gap: 4px;
     --panel-padding: 4px;
-    box-shadow: 8px 8px 0 rgb(0 0 0 / 10%);
-  }
-
-  .sidebar {
-    width: clamp(112px, 22vw, 168px);
-  }
-
-  .hud-panel-score,
-  .hud-panel-time {
-    min-height: 40px;
-  }
-
-  .hud-led-screen {
-    min-height: 36px;
-    padding: 4px;
-  }
-
-  .hud-control-button {
-    min-height: 26px;
-  }
-
-  .hud-next-piece-preview {
-    width: 32px;
-    height: 32px;
   }
 }
 
