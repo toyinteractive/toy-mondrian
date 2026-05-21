@@ -709,7 +709,8 @@ body {
   color: #05ad03;
 }
 
-@media (max-width: 640px) {
+/* Phones and tablets (incl. iPad Mini / Air / Pro in Chrome device mode) */
+@media (max-width: 1366px) {
   .landing {
     --landing-hero-size: 24px;
     --landing-instructions-size: 24px;
