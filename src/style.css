@@ -665,6 +665,10 @@ body {
   margin-bottom: 0;
 }
 
+.landing-instructions--mobile {
+  display: none;
+}
+
 .landing-footer {
   flex-shrink: 0;
   margin: 0;
@@ -710,6 +714,7 @@ body {
     --landing-hero-size: 24px;
     --landing-instructions-size: 24px;
     --landing-play-size: 32px;
+    --landing-mobile-play-height: 64px;
   }
 
   .landing-logo {
@@ -743,6 +748,9 @@ body {
 
   .landing-col-left {
     position: relative;
+    width: min(72vw, 300px);
+    margin: -40px auto 44px;
+    padding-bottom: 0;
   }
 
   .landing-hero-toy {
@@ -760,40 +768,59 @@ body {
 
   .landing-title--mobile-left,
   .landing-title--mobile-right {
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     font-size: var(--landing-hero-size);
-    white-space: nowrap;
+    line-height: 1;
     pointer-events: none;
+    z-index: 2;
   }
 
   .landing-title--mobile-left {
     left: 0;
-    top: 38%;
-    transform: translate(-6%, -50%);
+    top: 72%;
+    align-items: flex-start;
     text-align: left;
+    transform: translate(-24%, 14px);
   }
 
   .landing-title--mobile-right {
-    right: 0;
-    top: 22%;
-    transform: translate(6%, -50%);
-    text-align: right;
+    left: 68%;
+    right: auto;
+    top: 16%;
+    align-items: flex-start;
+    text-align: left;
+    transform: translate(28%, 0);
+  }
+
+  .landing-title--mobile-left .landing-title-line,
+  .landing-title--mobile-right .landing-title-line {
+    display: block;
   }
 
   .landing-play {
     grid-area: unset;
     position: absolute;
     left: 50%;
-    bottom: 14%;
+    top: calc(100% - 24px);
+    bottom: auto;
     width: auto;
+    height: var(--landing-mobile-play-height);
+    min-height: var(--landing-mobile-play-height);
     margin-top: 0;
     transform: translateX(-50%);
-    padding: 8px 32px;
+    padding: 0 42px;
     white-space: nowrap;
+    z-index: 3;
   }
 
-  .landing-instructions {
+  .landing-instructions--desktop {
+    display: none;
+  }
+
+  .landing-instructions--mobile {
+    display: block;
     grid-area: unset;
     margin-top: 0;
     padding-left: 0;

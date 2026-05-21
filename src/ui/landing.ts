@@ -1,5 +1,17 @@
 const FADE_MS = 500;
 
+function createMobileTitle(lines: [string, string], modifierClass: string): HTMLDivElement {
+  const title = document.createElement('div');
+  title.className = `landing-title ${modifierClass}`;
+  for (const line of lines) {
+    const span = document.createElement('span');
+    span.className = 'landing-title-line';
+    span.textContent = line;
+    title.appendChild(span);
+  }
+  return title;
+}
+
 export type LandingPage = {
   root: HTMLElement;
   waitUntilDismissed: () => Promise<void>;
@@ -45,13 +57,8 @@ export function createLandingPage(): LandingPage {
   toy.src = '/images/handheld-toy.png';
   toy.alt = 'Handheld Mondrian Blocks Toy';
 
-  const titleMobileLeft = document.createElement('div');
-  titleMobileLeft.className = 'landing-title landing-title--mobile-left';
-  titleMobileLeft.textContent = 'TOY OBJECTS';
-
-  const titleMobileRight = document.createElement('div');
-  titleMobileRight.className = 'landing-title landing-title--mobile-right';
-  titleMobileRight.textContent = 'MONDRIAN BLOCKS';
+  const titleMobileLeft = createMobileTitle(['TOY', 'OBJECTS'], 'landing-title--mobile-left');
+  const titleMobileRight = createMobileTitle(['MONDRIAN', 'BLOCKS'], 'landing-title--mobile-right');
 
   const playButton = document.createElement('button');
   playButton.type = 'button';
@@ -72,15 +79,23 @@ export function createLandingPage(): LandingPage {
     titleDesktop.appendChild(span);
   }
 
-  const instructions = document.createElement('div');
-  instructions.className = 'landing-instructions';
-  instructions.innerHTML = `
+  const instructionsDesktop = document.createElement('div');
+  instructionsDesktop.className = 'landing-instructions landing-instructions--desktop';
+  instructionsDesktop.innerHTML = `
     <p>USE ARROW <span aria-hidden="true">← →</span> KEYS TO MOVE</p>
     <p>USE UP ARROW <span aria-hidden="true">↑</span> KEY TO ROTATE</p>
     <p>DOWNLOAD ARTWORK AT END</p>
   `;
 
-  colRight.append(titleDesktop, instructions);
+  const instructionsMobile = document.createElement('div');
+  instructionsMobile.className = 'landing-instructions landing-instructions--mobile';
+  instructionsMobile.innerHTML = `
+    <p>SWIPE LEFT <span aria-hidden="true">← →</span> RIGHT TO MOVE</p>
+    <p>SWIPE UP <span aria-hidden="true">↑</span> TO ROTATE</p>
+    <p>DOWNLOAD ARTWORK AT END</p>
+  `;
+
+  colRight.append(titleDesktop, instructionsDesktop, instructionsMobile);
   panel.append(colLeft, colRight);
   main.append(panel);
 
