@@ -58,7 +58,10 @@ async function bootstrap(): Promise<void> {
 
   const refreshRendererLayout = (): void => {
     scene.applyLayout();
-    app.resize();
+    requestAnimationFrame(() => {
+      app.resize();
+      scene.syncSprite();
+    });
   };
   window.addEventListener('resize', refreshRendererLayout);
   window.visualViewport?.addEventListener('resize', refreshRendererLayout);

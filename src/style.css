@@ -981,9 +981,13 @@ body {
   .canvas-container {
     grid-area: canvas;
     width: min(100%, calc((100dvh - var(--mobile-ui-reserved-height)) * 0.5));
+    height: auto;
+    aspect-ratio: 1 / 2;
+    max-width: 100%;
     border: 3px solid #111111;
     box-sizing: border-box;
     justify-self: center;
+    align-self: center;
   }
 
   .sidebar,

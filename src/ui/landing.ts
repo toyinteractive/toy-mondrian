@@ -91,7 +91,7 @@ export function createLandingPage(): LandingPage {
   instructionsMobile.className = 'landing-instructions landing-instructions--mobile';
   instructionsMobile.innerHTML = `
     <p>SWIPE LEFT <span aria-hidden="true">← →</span> RIGHT TO MOVE</p>
-    <p>SWIPE UP <span aria-hidden="true">↑</span> TO ROTATE</p>
+    <p>TAP TO ROTATE</p>
     <p>DOWNLOAD ARTWORK AT END</p>
   `;
 
