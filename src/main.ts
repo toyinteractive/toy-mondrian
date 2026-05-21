@@ -14,6 +14,7 @@ import { setupHud, updateHud } from './ui/hud';
 import { createBrandLogo } from './ui/brand-logo';
 import { createConfettiOverlay } from './ui/confetti';
 import { createLandingPage } from './ui/landing';
+import { setupBylineCursorLogo } from './ui/byline-cursor-logo';
 import { applySfxForTransition, createSfxController } from './audio/sfx';
 
 function randomSeed(): number {
@@ -54,6 +55,8 @@ async function bootstrap(): Promise<void> {
   brandLogo.classList.add('app-brand-logo');
 
   appHost.append(brandLogo, appShell, byline);
+
+  setupBylineCursorLogo();
 
   const sfx = createSfxController();
   sfx.installUnlockHandlers();
