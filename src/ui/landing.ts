@@ -4,6 +4,18 @@ const FADE_MS = 500;
 /** Fallback if animationend does not fire (morph delay 5.35s + 1.05s). */
 const LOGO_INTRO_FALLBACK_MS = 6450;
 
+const ORCHESTRATED_INTRO_MEDIA = '(min-width: 1281px), (max-width: 1280px) and (orientation: landscape)';
+
+function shouldRunOrchestratedIntro(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return false;
+  }
+  return window.matchMedia(ORCHESTRATED_INTRO_MEDIA).matches;
+}
+
 function appendFallingTitleLine(parent: HTMLElement, text: string, startIndex: number): number {
   const line = document.createElement('span');
   line.className = 'landing-title-line';
@@ -128,7 +140,8 @@ export function createLandingPage(options: LandingPageOptions = {}): LandingPage
   ]);
 
   const instructionsMobile = document.createElement('div');
-  instructionsMobile.className = 'landing-instructions landing-instructions--mobile';
+  instructionsMobile.className =
+    'landing-instructions landing-instructions--mobile landing-animate-item landing-animate-item--instructions';
   instructionsMobile.innerHTML = `
     <p>SWIPE LEFT <span aria-hidden="true">← →</span> RIGHT TO MOVE</p>
     <p>TAP TO ROTATE</p>
@@ -179,7 +192,7 @@ export function createLandingPage(options: LandingPageOptions = {}): LandingPage
     window.setTimeout(finishLogoIntro, LOGO_INTRO_FALLBACK_MS);
   };
 
-  if (!prefersReducedMotion && window.matchMedia('(min-width: 1281px)').matches) {
+  if (shouldRunOrchestratedIntro()) {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         root.classList.add('landing--ready');
