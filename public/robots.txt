@@ -11,3 +11,5 @@ Allow: /
 # Everything else
 User-agent: *
 Allow: /
+
+Sitemap: https://toy-mondrian.vercel.app/sitemap.xml

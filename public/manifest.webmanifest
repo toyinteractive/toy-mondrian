@@ -1,0 +1,37 @@
+{
+  "name": "Toy Mondrian",
+  "short_name": "Toy Mondrian",
+  "description": "Toy Mondrian is a playable Tetris-style game made of Mondrian Blocks. You end up with a piece of neoplastic artwork each time you play, downloadable as a JPEG or an SVG.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#dcdcdc",
+  "theme_color": "#111111",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
