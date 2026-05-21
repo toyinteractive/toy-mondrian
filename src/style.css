@@ -663,10 +663,6 @@ body {
   display: block;
 }
 
-.landing-title-char {
-  display: inline-block;
-}
-
 .landing-title--mobile-left,
 .landing-title--mobile-right {
   display: none;
@@ -859,30 +855,6 @@ body {
     }
   }
 
-  @keyframes landing-block-fall {
-    0% {
-      opacity: 0;
-      transform: translateY(-2.4em) translateX(var(--landing-block-drift, 0));
-    }
-
-    12% {
-      opacity: 1;
-    }
-
-    68% {
-      transform: translateY(0.05em) translateX(0);
-    }
-
-    84% {
-      transform: translateY(-0.025em) translateX(0);
-    }
-
-    100% {
-      opacity: 1;
-      transform: translateY(0) translateX(0);
-    }
-  }
-
   /* Footer (up) + logo (spin as Amrit, then morph to Mondrian) */
   .landing--ready .landing-animate-item--footer {
     animation: landing-slide-from-bottom 1s cubic-bezier(0.33, 1, 0.68, 1) 4.3s both;
@@ -904,34 +876,16 @@ body {
 /* Desktop + landscape grid — orchestrated entrance */
 @media (min-width: 1281px) and (prefers-reduced-motion: no-preference),
   (max-width: 1280px) and (orientation: landscape) and (prefers-reduced-motion: no-preference) {
-  /* 1 — toy (left) + Toy Objects (right), together */
+  /* 1 — toy (left) + hero text: Toy Objects + Mondrian Blocks (right), together */
   .landing--ready .landing-animate-item--toy {
     animation: landing-slide-from-left 1.6s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
   }
 
-  .landing--ready .landing-animate-item--toy-objects {
+  .landing--ready .landing-animate-item--hero-text {
     animation: landing-slide-from-right 1.6s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
   }
 
-  .landing-title-group--mondrian-blocks {
-    overflow: hidden;
-  }
-
-  .landing-title-group--mondrian-blocks .landing-title-line {
-    white-space: nowrap;
-  }
-
-  .landing:not(.landing--ready) .landing-title-group--mondrian-blocks .landing-title-char {
-    opacity: 0;
-  }
-
-  /* 2 — Mondrian Blocks: each letter drops like a block */
-  .landing--ready .landing-title-group--mondrian-blocks .landing-title-char {
-    animation: landing-block-fall 0.52s cubic-bezier(0.22, 1, 0.36, 1) calc(1.55s + var(--landing-block-i, 0) * 60ms)
-      both;
-  }
-
-  /* 3 — PLAY (left) + instructions (right), together */
+  /* 2 — PLAY (left) + instructions (right), together */
   .landing--ready .landing-animate-item--play {
     animation: landing-slide-from-left 1.2s cubic-bezier(0.33, 1, 0.68, 1) 3.05s both;
   }
@@ -968,6 +922,18 @@ body {
     }
   }
 
+  @keyframes landing-portrait-mondrian-blocks-in {
+    from {
+      opacity: 0;
+      transform: translate(42vw, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate(28%, 0);
+    }
+  }
+
   @keyframes landing-portrait-play-rise {
     from {
       opacity: 0;
@@ -992,20 +958,11 @@ body {
     }
   }
 
-  .landing:not(.landing--ready) .landing-title--mobile-right .landing-title-char,
   .landing:not(.landing--ready) .landing-instructions--mobile .landing-instructions-line {
     opacity: 0;
   }
 
-  .landing-title--mobile-right {
-    overflow: hidden;
-  }
-
-  .landing-title--mobile-right .landing-title-line {
-    white-space: nowrap;
-  }
-
-  /* 1 — toy rises + Toy Objects from the left */
+  /* 1 — toy rises + Toy Objects (left) + Mondrian Blocks (right), together */
   .landing--ready .landing-animate-item--toy {
     animation: landing-portrait-toy-rise 1.2s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
   }
@@ -1014,13 +971,11 @@ body {
     animation: landing-portrait-toy-objects-in 1.1s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
   }
 
-  /* 2 — Mondrian Blocks: letters fall onto the toy */
-  .landing--ready .landing-title--mobile-right .landing-title-char {
-    animation: landing-block-fall 0.45s cubic-bezier(0.22, 1, 0.36, 1) calc(0.75s + var(--landing-block-i, 0) * 50ms)
-      both;
+  .landing--ready .landing-animate-item--mobile-mondrian-blocks {
+    animation: landing-portrait-mondrian-blocks-in 1.1s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
   }
 
-  /* 3 — PLAY rises into place on the toy */
+  /* 2 — PLAY rises into place on the toy */
   .landing--ready .landing-animate-item--play {
     animation: landing-portrait-play-rise 0.65s cubic-bezier(0.33, 1, 0.68, 1) 2.25s both;
   }

@@ -17,45 +17,26 @@ function shouldRunOrchestratedIntro(): boolean {
   return window.matchMedia(ORCHESTRATED_INTRO_MEDIA).matches;
 }
 
-function appendFallingTitleLine(parent: HTMLElement, text: string, startIndex: number): number {
-  const line = document.createElement('span');
-  line.className = 'landing-title-line';
-
-  let index = startIndex;
-  for (const char of text) {
-    const glyph = document.createElement('span');
-    glyph.className = 'landing-title-char';
-    glyph.textContent = char;
-    glyph.style.setProperty('--landing-block-i', String(index));
-    glyph.style.setProperty('--landing-block-drift', `${((index % 3) - 1) * 9}px`);
-    line.appendChild(glyph);
-    index += 1;
+function appendTitleLines(parent: HTMLElement, lines: readonly string[]): void {
+  for (const lineText of lines) {
+    const span = document.createElement('span');
+    span.className = 'landing-title-line';
+    span.textContent = lineText;
+    parent.appendChild(span);
   }
-
-  parent.appendChild(line);
-  return index;
 }
 
 function createDesktopTitle(): HTMLDivElement {
   const title = document.createElement('div');
-  title.className = 'landing-title landing-title--desktop';
+  title.className = 'landing-title landing-title--desktop landing-animate-item landing-animate-item--hero-text';
 
   const toyObjects = document.createElement('div');
-  toyObjects.className =
-    'landing-title-group landing-title-group--toy-objects landing-animate-item landing-animate-item--toy-objects';
-  for (const line of ['TOY', 'OBJECTS']) {
-    const span = document.createElement('span');
-    span.className = 'landing-title-line';
-    span.textContent = line;
-    toyObjects.appendChild(span);
-  }
+  toyObjects.className = 'landing-title-group landing-title-group--toy-objects';
+  appendTitleLines(toyObjects, ['TOY', 'OBJECTS']);
 
   const mondrianBlocks = document.createElement('div');
-  mondrianBlocks.className =
-    'landing-title-group landing-title-group--mondrian-blocks landing-animate-item landing-animate-item--mondrian-blocks';
-  let blockIndex = 0;
-  blockIndex = appendFallingTitleLine(mondrianBlocks, 'MONDRIAN', blockIndex);
-  appendFallingTitleLine(mondrianBlocks, 'BLOCKS', blockIndex);
+  mondrianBlocks.className = 'landing-title-group landing-title-group--mondrian-blocks';
+  appendTitleLines(mondrianBlocks, ['MONDRIAN', 'BLOCKS']);
 
   title.append(toyObjects, mondrianBlocks);
   return title;
@@ -79,29 +60,6 @@ function createMobileTitle(lines: [string, string], modifierClass: string, anima
     span.textContent = line;
     title.appendChild(span);
   }
-  return title;
-}
-
-function createMobileMondrianBlocks(): HTMLDivElement {
-  const title = document.createElement('div');
-  title.className = 'landing-title landing-title--mobile-right landing-title--mobile-mondrian-blocks';
-
-  let blockIndex = 0;
-  for (const lineText of ['MONDRIAN', 'BLOCKS']) {
-    const line = document.createElement('span');
-    line.className = 'landing-title-line';
-    for (const char of lineText) {
-      const glyph = document.createElement('span');
-      glyph.className = 'landing-title-char';
-      glyph.textContent = char;
-      glyph.style.setProperty('--landing-block-i', String(blockIndex));
-      glyph.style.setProperty('--landing-block-drift', `${((blockIndex % 3) - 1) * 6}px`);
-      line.appendChild(glyph);
-      blockIndex += 1;
-    }
-    title.appendChild(line);
-  }
-
   return title;
 }
 
@@ -144,7 +102,11 @@ export function createLandingPage(options: LandingPageOptions = {}): LandingPage
     'landing-title--mobile-left',
     'landing-animate-item landing-animate-item--mobile-toy-objects'
   );
-  const titleMobileRight = createMobileMondrianBlocks();
+  const titleMobileRight = createMobileTitle(
+    ['MONDRIAN', 'BLOCKS'],
+    'landing-title--mobile-right',
+    'landing-animate-item landing-animate-item--mobile-mondrian-blocks'
+  );
 
   const playButton = document.createElement('button');
   playButton.type = 'button';
