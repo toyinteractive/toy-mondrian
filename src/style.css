@@ -627,10 +627,20 @@ body {
   flex-direction: column;
   justify-self: start;
   align-self: center;
+  gap: 0;
+}
+
+.landing-title-group {
+  display: flex;
+  flex-direction: column;
 }
 
 .landing-title-line {
   display: block;
+}
+
+.landing-title-char {
+  display: inline-block;
 }
 
 .landing-title--mobile-left,
@@ -686,12 +696,218 @@ body {
   padding-left: var(--landing-instructions-indent);
 }
 
-.landing-instructions p {
+.landing-instructions p,
+.landing-instructions-line {
   margin: 0 0 0.35em;
 }
 
-.landing-instructions p:last-child {
+.landing-instructions p:last-child,
+.landing-instructions-line:last-child {
   margin-bottom: 0;
+}
+
+/* Desktop landing — orchestrated entrance */
+@media (min-width: 1281px) and (prefers-reduced-motion: no-preference) {
+  .landing {
+    overflow: hidden;
+  }
+
+  .landing:not(.landing--ready) .landing-animate-item {
+    opacity: 0;
+  }
+
+  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img {
+    transition: none;
+  }
+
+  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--mondrian {
+    opacity: 0;
+    transform: scale(0.85) rotate(6deg);
+  }
+
+  /* After intro: freeze final frame, then enable hover transitions next frame */
+  .landing--logo-intro-done .landing-animate-item--logo {
+    animation: none;
+    transform: rotate(0deg);
+  }
+
+  .landing--logo-intro-done .landing-animate-item--logo .brand-logo-img {
+    animation: none;
+    transition: none;
+  }
+
+  .landing--logo-hover-ready .landing-animate-item--logo .brand-logo-img {
+    transition:
+      opacity 280ms ease,
+      transform 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  .landing--logo-hover-ready .brand-logo:hover .brand-logo-img--mondrian,
+  .landing--logo-hover-ready .brand-logo:focus-within .brand-logo-img--mondrian {
+    opacity: 0;
+    transform: scale(1.05) rotate(-6deg);
+  }
+
+  .landing--logo-hover-ready .brand-logo:hover .brand-logo-img--amrit,
+  .landing--logo-hover-ready .brand-logo:focus-within .brand-logo-img--amrit {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  @keyframes landing-slide-from-left {
+    from {
+      opacity: 0;
+      transform: translateX(-58vw);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes landing-slide-from-right {
+    from {
+      opacity: 0;
+      transform: translateX(42vw);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes landing-slide-from-bottom {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes landing-logo-spin {
+    0% {
+      opacity: 0;
+      transform: rotate(0deg);
+    }
+
+    14% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 1;
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Amrit: hold through spin, crossfade out while Mondrian comes in */
+  @keyframes landing-logo-amrit-intro {
+    0%,
+    50% {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(0.85) rotate(6deg);
+    }
+  }
+
+  @keyframes landing-logo-mondrian-in {
+    from {
+      opacity: 0;
+      transform: scale(0.85) rotate(0deg);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) rotate(-360deg);
+    }
+  }
+
+  /* 1 — toy (left) + Toy Objects (right), together */
+  .landing--ready .landing-animate-item--toy {
+    animation: landing-slide-from-left 1.6s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
+  }
+
+  .landing--ready .landing-animate-item--toy-objects {
+    animation: landing-slide-from-right 1.6s cubic-bezier(0.33, 1, 0.68, 1) 0ms both;
+  }
+
+  @keyframes landing-block-fall {
+    0% {
+      opacity: 0;
+      transform: translateY(-2.4em) translateX(var(--landing-block-drift, 0));
+    }
+
+    12% {
+      opacity: 1;
+    }
+
+    68% {
+      transform: translateY(0.05em) translateX(0);
+    }
+
+    84% {
+      transform: translateY(-0.025em) translateX(0);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0) translateX(0);
+    }
+  }
+
+  .landing-title-group--mondrian-blocks {
+    overflow: hidden;
+  }
+
+  .landing-title-group--mondrian-blocks .landing-title-line {
+    white-space: nowrap;
+  }
+
+  .landing:not(.landing--ready) .landing-title-group--mondrian-blocks .landing-title-char {
+    opacity: 0;
+  }
+
+  /* 2 — Mondrian Blocks: each letter drops like a block */
+  .landing--ready .landing-title-group--mondrian-blocks .landing-title-char {
+    animation: landing-block-fall 0.52s cubic-bezier(0.22, 1, 0.36, 1) calc(1.55s + var(--landing-block-i, 0) * 60ms)
+      both;
+  }
+
+  /* 3 — PLAY (left) + instructions (right), together */
+  .landing--ready .landing-animate-item--play {
+    animation: landing-slide-from-left 1.2s cubic-bezier(0.33, 1, 0.68, 1) 3.05s both;
+  }
+
+  .landing--ready .landing-animate-item--instructions {
+    animation: landing-slide-from-right 1.2s cubic-bezier(0.33, 1, 0.68, 1) 3.05s both;
+  }
+
+  /* 4 — footer (up) + logo (spin as Amrit, then morph to Mondrian), together */
+  .landing--ready .landing-animate-item--footer {
+    animation: landing-slide-from-bottom 1s cubic-bezier(0.33, 1, 0.68, 1) 4.3s both;
+  }
+
+  .landing--ready .landing-animate-item--logo {
+    animation: landing-logo-spin 1.05s cubic-bezier(0.33, 1, 0.68, 1) 4.3s both;
+  }
+
+  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--amrit {
+    animation: landing-logo-amrit-intro 2.1s cubic-bezier(0.34, 1.4, 0.64, 1) 4.3s forwards;
+  }
+
+  .landing--ready:not(.landing--logo-intro-done) .landing-animate-item--logo .brand-logo-img--mondrian {
+    animation: landing-logo-mondrian-in 1.05s cubic-bezier(0.33, 1, 0.68, 1) 5.35s forwards;
+  }
 }
 
 .landing-instructions--mobile {
