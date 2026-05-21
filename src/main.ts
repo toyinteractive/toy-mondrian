@@ -10,6 +10,7 @@ import { exportBoardAs4kJpegBlob } from './ui/board-jpeg-export';
 import { createDownloadModal } from './ui/download-modal';
 import { exportVectorArtFromGameState } from './ui/gallery-export';
 import { setupHud, updateHud } from './ui/hud';
+import { createLandingPage } from './ui/landing';
 import { applySfxForTransition, createSfxController } from './audio/sfx';
 
 function randomSeed(): number {
@@ -25,8 +26,11 @@ async function bootstrap(): Promise<void> {
     throw new Error('Missing #app root element');
   }
 
+  const landing = createLandingPage();
+  appHost.prepend(landing.root);
+
   const appShell = document.createElement('div');
-  appShell.className = 'app-shell';
+  appShell.className = 'app-shell app-shell--hidden';
   const gameLayout = document.createElement('div');
   gameLayout.className = 'game-layout';
   const canvasContainer = document.createElement('div');
@@ -125,6 +129,8 @@ async function bootstrap(): Promise<void> {
     updateHud(state);
   });
 
+  await landing.waitUntilDismissed();
+  appShell.classList.remove('app-shell--hidden');
   runtime.start();
 }
 

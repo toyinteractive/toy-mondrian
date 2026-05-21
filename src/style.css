@@ -452,6 +452,334 @@ body {
   display: none;
 }
 
+.app-shell--hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#app:has(.landing) .app-byline {
+  display: none;
+}
+
+/* --- Landing page --- */
+
+.landing {
+  --landing-hero-size: 128px;
+  --landing-instructions-size: 32px;
+  --landing-play-size: 64px;
+  --landing-tracking: 0.12em;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: #dcdcdc;
+  color: #111111;
+  font-family: 'Bebas Neue', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: var(--landing-tracking);
+  line-height: 1;
+  opacity: 1;
+  transition: opacity 500ms ease;
+}
+
+.landing--exiting {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.landing-logo {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 2;
+  width: 74px;
+  height: 63px;
+  cursor: default;
+  outline: none;
+}
+
+.landing-logo:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 4px;
+}
+
+.landing-logo-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition:
+    opacity 280ms ease,
+    transform 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.landing-logo-img--mondrian {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.landing-logo-img--amrit {
+  opacity: 0;
+  transform: scale(0.85) rotate(6deg);
+}
+
+.landing-logo:hover .landing-logo-img--mondrian,
+.landing-logo:focus-within .landing-logo-img--mondrian {
+  opacity: 0;
+  transform: scale(1.05) rotate(-6deg);
+}
+
+.landing-logo:hover .landing-logo-img--amrit,
+.landing-logo:focus-within .landing-logo-img--amrit {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.landing-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 48px 56px;
+  box-sizing: border-box;
+  min-height: 0;
+}
+
+.landing-panel {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto;
+  column-gap: clamp(24px, 4vw, 64px);
+  row-gap: clamp(20px, 3vh, 40px);
+  align-items: end;
+  justify-content: center;
+}
+
+.landing-hero {
+  display: contents;
+}
+
+.landing-hero-toy {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: clamp(280px, 36vw, 520px);
+  height: auto;
+  display: block;
+  align-self: center;
+  justify-self: end;
+}
+
+.landing-title {
+  text-transform: uppercase;
+  font-size: var(--landing-hero-size);
+  letter-spacing: var(--landing-tracking);
+  line-height: 1;
+  font-weight: 700;
+}
+
+.landing-title--desktop {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+
+.landing-title-line {
+  display: block;
+}
+
+.landing-title--mobile-left,
+.landing-title--mobile-right {
+  display: none;
+}
+
+.landing-play {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: start;
+  align-self: end;
+  padding: 12px 48px;
+  border: 3px solid #111111;
+  background: #fdde06;
+  color: #111111;
+  font-family: inherit;
+  font-size: var(--landing-play-size);
+  font-weight: 700;
+  letter-spacing: var(--landing-tracking);
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.landing-play:hover {
+  filter: brightness(1.04);
+}
+
+.landing-play:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 3px;
+}
+
+.landing-play:disabled {
+  cursor: default;
+}
+
+.landing-instructions {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: var(--landing-instructions-size);
+  letter-spacing: var(--landing-tracking);
+  line-height: 1;
+  font-weight: 700;
+  text-transform: uppercase;
+  align-self: end;
+}
+
+.landing-instructions p {
+  margin: 0 0 0.35em;
+}
+
+.landing-instructions p:last-child {
+  margin-bottom: 0;
+}
+
+.landing-footer {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 4px 0;
+  width: 100%;
+  background: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: normal;
+  color: #f0f0f0;
+}
+
+.landing-footer-heart {
+  color: #e70503;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.landing-footer-link {
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.landing-footer-link--amrit:hover,
+.landing-footer-link--amrit:focus-visible {
+  color: #e70503;
+}
+
+.landing-footer-link--karan:hover,
+.landing-footer-link--karan:focus-visible {
+  color: #05ad03;
+}
+
+@media (max-width: 640px) {
+  .landing {
+    --landing-hero-size: 24px;
+    --landing-instructions-size: 24px;
+    --landing-play-size: 32px;
+  }
+
+  .landing-logo {
+    top: 16px;
+    left: 16px;
+    width: 56px;
+    height: 48px;
+  }
+
+  .landing-main {
+    padding: 72px 16px 16px;
+    justify-content: center;
+  }
+
+  .landing-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: min(92vw, 420px);
+  }
+
+  .landing-hero {
+    display: block;
+    position: relative;
+    width: 100%;
+  }
+
+  .landing-hero-toy {
+    width: 100%;
+    display: block;
+  }
+
+  .landing-title--desktop {
+    display: none;
+  }
+
+  .landing-title--mobile-left,
+  .landing-title--mobile-right {
+    display: block;
+    position: absolute;
+    font-size: var(--landing-hero-size);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .landing-title--mobile-left {
+    left: 0;
+    top: 38%;
+    transform: translate(-6%, -50%);
+    text-align: left;
+  }
+
+  .landing-title--mobile-right {
+    right: 0;
+    top: 22%;
+    transform: translate(6%, -50%);
+    text-align: right;
+  }
+
+  .landing-play {
+    grid-column: unset;
+    grid-row: unset;
+    position: absolute;
+    left: 50%;
+    bottom: 14%;
+    transform: translateX(-50%);
+    padding: 8px 32px;
+    white-space: nowrap;
+  }
+
+  .landing-instructions {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing {
+    transition: none;
+  }
+
+  .landing-logo-img {
+    transition: none;
+  }
+}
+
 .app-byline {
   position: fixed;
   left: 0;
