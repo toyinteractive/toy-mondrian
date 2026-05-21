@@ -10,6 +10,7 @@ import { exportBoardAs4kJpegBlob } from './ui/board-jpeg-export';
 import { createDownloadModal } from './ui/download-modal';
 import { exportVectorArtFromGameState } from './ui/gallery-export';
 import { setupHud, updateHud } from './ui/hud';
+import { createBrandLogo } from './ui/brand-logo';
 import { createLandingPage } from './ui/landing';
 import { applySfxForTransition, createSfxController } from './audio/sfx';
 
@@ -49,7 +50,11 @@ async function bootstrap(): Promise<void> {
   `;
 
   appShell.appendChild(gameLayout);
-  appHost.append(appShell, byline);
+
+  const brandLogo = createBrandLogo();
+  brandLogo.classList.add('app-brand-logo');
+
+  appHost.append(brandLogo, appShell, byline);
 
   const app = await createPixiApp(canvasContainer);
   canvasContainer.appendChild(app.canvas);

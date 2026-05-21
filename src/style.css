@@ -495,7 +495,7 @@ body {
   pointer-events: none;
 }
 
-.landing-logo {
+.brand-logo {
   position: fixed;
   top: 24px;
   left: 24px;
@@ -506,12 +506,12 @@ body {
   outline: none;
 }
 
-.landing-logo:focus-visible {
+.brand-logo:focus-visible {
   outline: 2px solid #111111;
   outline-offset: 4px;
 }
 
-.landing-logo-img {
+.brand-logo-img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -522,26 +522,41 @@ body {
     transform 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
-.landing-logo-img--mondrian {
+.brand-logo-img--mondrian {
   opacity: 1;
   transform: scale(1) rotate(0deg);
 }
 
-.landing-logo-img--amrit {
+.brand-logo-img--amrit {
   opacity: 0;
   transform: scale(0.85) rotate(6deg);
 }
 
-.landing-logo:hover .landing-logo-img--mondrian,
-.landing-logo:focus-within .landing-logo-img--mondrian {
+.brand-logo:hover .brand-logo-img--mondrian,
+.brand-logo:focus-within .brand-logo-img--mondrian {
   opacity: 0;
   transform: scale(1.05) rotate(-6deg);
 }
 
-.landing-logo:hover .landing-logo-img--amrit,
-.landing-logo:focus-within .landing-logo-img--amrit {
+.brand-logo:hover .brand-logo-img--amrit,
+.brand-logo:focus-within .brand-logo-img--amrit {
   opacity: 1;
   transform: scale(1) rotate(0deg);
+}
+
+/* Desktop game view only — hidden on mobile portrait, landscape, and while landing is up */
+.app-brand-logo {
+  display: none;
+}
+
+#app:not(:has(.landing)) .app-brand-logo {
+  display: block;
+}
+
+@media (max-width: 1280px) and (orientation: portrait), (max-width: 1280px) and (orientation: landscape) {
+  .app-brand-logo {
+    display: none !important;
+  }
 }
 
 .landing-main {
@@ -718,7 +733,7 @@ body {
     --landing-mobile-play-height: 64px;
   }
 
-  .landing-logo {
+  .landing .brand-logo {
     top: 16px;
     left: 16px;
     width: 56px;
@@ -878,7 +893,7 @@ body {
     transition: none;
   }
 
-  .landing-logo-img {
+  .landing .brand-logo-img {
     transition: none;
   }
 }
