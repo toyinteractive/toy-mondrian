@@ -8,9 +8,12 @@ import { chromium } from 'playwright';
  * Screenshots `public/social/og-preview.html` (toy + hero titles + enlarged footer)
  * into platform-ready social preview PNGs.
  *
+ * Not part of `pnpm build` (Vercel/CI have no Playwright Chromium). Commit the
+ * generated `public/og.png` and `public/social/twitter-card.png` after running locally.
+ *
  * First time: `pnpm exec playwright install chromium`
- * Preview in browser: http://localhost:5173/social/og-preview.html (during `pnpm dev`)
- * Regenerate: `pnpm social-images`
+ * Preview: http://localhost:5173/social/og-preview.html (`pnpm dev` or `pnpm preview:og`)
+ * Regenerate after editing og-preview: `pnpm social-images`
  */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
