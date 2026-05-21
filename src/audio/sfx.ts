@@ -8,6 +8,7 @@ type SfxId = 'move' | 'rotate' | 'line' | 'victory';
 
 type SfxController = {
   installUnlockHandlers: () => void;
+  unlock: () => void;
   getVolume: () => number;
   isMuted: () => boolean;
   setVolume: (value: number) => void;
@@ -22,6 +23,21 @@ const MOVE_MIN_INTERVAL_MS = 60;
 const LINE_CLEAR_MIN_SCORE_GAIN = 100;
 const VOLUME_STORAGE_KEY = 'toy-mondrian-sfx-volume';
 const DEFAULT_VOLUME = 0.65;
+
+/** Pool sizes — overlapping plays on one element drop sounds on iOS. */
+const POOL_SIZES: Record<SfxId, number> = {
+  move: 6,
+  rotate: 3,
+  line: 2,
+  victory: 1,
+};
+
+const SFX_URLS: Record<SfxId, string> = {
+  move: moveUrl,
+  rotate: rotateUrl,
+  line: lineUrl,
+  victory: victoryUrl,
+};
 
 function clampVolume(value: number): number {
   if (!Number.isFinite(value)) {
@@ -41,57 +57,131 @@ function readPersistedVolume(): number {
   return clampVolume(Number.parseFloat(raw));
 }
 
+function configureAudioElement(audio: HTMLAudioElement): void {
+  audio.preload = 'auto';
+  audio.setAttribute('playsinline', '');
+}
+
+type SfxPool = {
+  elements: HTMLAudioElement[];
+  cursor: number;
+};
+
+function createPool(url: string, size: number): SfxPool {
+  const elements = Array.from({ length: size }, () => {
+    const audio = new Audio(url);
+    configureAudioElement(audio);
+    return audio;
+  });
+  return { elements, cursor: 0 };
+}
+
 export function createSfxController(): SfxController {
   let volume = readPersistedVolume();
   let muted = volume <= 0.0001;
   let lastNonZeroVolume = muted ? DEFAULT_VOLUME : volume;
-  const sounds: Record<SfxId, HTMLAudioElement> = {
-    move: new Audio(moveUrl),
-    rotate: new Audio(lineUrl),
-    line: new Audio(rotateUrl),
-    victory: new Audio(victoryUrl),
+
+  const pools: Record<SfxId, SfxPool> = {
+    move: createPool(SFX_URLS.move, POOL_SIZES.move),
+    rotate: createPool(SFX_URLS.rotate, POOL_SIZES.rotate),
+    line: createPool(SFX_URLS.line, POOL_SIZES.line),
+    victory: createPool(SFX_URLS.victory, POOL_SIZES.victory),
   };
 
-  for (const audio of Object.values(sounds)) {
-    audio.preload = 'auto';
-    audio.volume = volume;
-  }
+  const allElements = (): HTMLAudioElement[] => Object.values(pools).flatMap((pool) => pool.elements);
+
+  const applyVolumeToAll = (): void => {
+    for (const audio of allElements()) {
+      audio.volume = volume;
+    }
+  };
+
+  applyVolumeToAll();
 
   let unlocked = false;
   let lastMoveAt = 0;
 
-  const removeUnlockHandlers = (): void => {
-    window.removeEventListener('pointerdown', tryUnlock, true);
-    window.removeEventListener('keydown', tryUnlock, true);
-    window.removeEventListener('touchstart', tryUnlock, true);
-  };
-
-  const tryUnlock = (): void => {
-    if (unlocked) {
+  /** Must call play() synchronously inside the user gesture (iOS Safari). */
+  const primeElement = (audio: HTMLAudioElement): void => {
+    const targetVolume = audio.volume;
+    audio.volume = 0.001;
+    const playPromise = audio.play();
+    if (playPromise === undefined) {
+      audio.volume = targetVolume;
       return;
     }
+    void playPromise
+      .then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = targetVolume;
+      })
+      .catch(() => {
+        audio.volume = targetVolume;
+      });
+  };
+
+  const unlock = (): void => {
+    if (typeof window === 'undefined') {
+      unlocked = true;
+      return;
+    }
+
+    if (muted) {
+      unlocked = true;
+      return;
+    }
+
+    if (!unlocked) {
+      for (const audio of allElements()) {
+        primeElement(audio);
+      }
+    }
+
     unlocked = true;
-    removeUnlockHandlers();
   };
 
   const play = (id: SfxId): void => {
-    if (!unlocked) {
+    if (!unlocked || muted) {
       return;
     }
-    const audio = sounds[id];
+
+    const pool = pools[id];
+    const audio = pool.elements[pool.cursor];
+    pool.cursor = (pool.cursor + 1) % pool.elements.length;
+
+    audio.volume = volume;
+    if (!audio.paused && audio.currentTime > 0) {
+      audio.pause();
+    }
     audio.currentTime = 0;
     void audio.play().catch(() => {
-      // Ignore transient browser playback failures.
+      unlocked = false;
     });
+  };
+
+  const onVisibilityChange = (): void => {
+    if (document.visibilityState === 'visible') {
+      unlocked = false;
+    }
   };
 
   return {
     installUnlockHandlers: () => {
-      // Capture phase ensures unlock runs before document/body input handlers.
-      window.addEventListener('pointerdown', tryUnlock, { capture: true, passive: true });
-      window.addEventListener('keydown', tryUnlock, { capture: true, passive: true });
-      window.addEventListener('touchstart', tryUnlock, { capture: true, passive: true });
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      const onGesture = (): void => {
+        unlock();
+      };
+
+      window.addEventListener('pointerdown', onGesture, { capture: true, passive: true });
+      window.addEventListener('touchstart', onGesture, { capture: true, passive: true });
+      window.addEventListener('keydown', onGesture, { capture: true, passive: true });
+      document.addEventListener('visibilitychange', onVisibilityChange);
     },
+    unlock,
     getVolume: () => volume,
     isMuted: () => muted,
     setVolume: (value: number) => {
@@ -102,9 +192,7 @@ export function createSfxController(): SfxController {
       } else {
         muted = true;
       }
-      for (const audio of Object.values(sounds)) {
-        audio.volume = volume;
-      }
+      applyVolumeToAll();
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
       }
@@ -120,9 +208,7 @@ export function createSfxController(): SfxController {
         volume = 0;
         muted = true;
       }
-      for (const audio of Object.values(sounds)) {
-        audio.volume = volume;
-      }
+      applyVolumeToAll();
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
       }

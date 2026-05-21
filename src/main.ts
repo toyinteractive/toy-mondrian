@@ -55,6 +55,9 @@ async function bootstrap(): Promise<void> {
 
   appHost.append(brandLogo, appShell, byline);
 
+  const sfx = createSfxController();
+  sfx.installUnlockHandlers();
+
   const revealGame = (instant: boolean): void => {
     appHost.classList.add('app--game-reveal');
     appShell.classList.remove('app-shell--hidden');
@@ -77,6 +80,7 @@ async function bootstrap(): Promise<void> {
 
   const landing = createLandingPage({
     onPlayPressed: () => {
+      sfx.unlock();
       const reducedMotion =
         typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       revealGame(reducedMotion);
@@ -106,9 +110,7 @@ async function bootstrap(): Promise<void> {
   layoutObserver.observe(gameLayout);
   layoutObserver.observe(sidebarContainer);
   const runtime = new EngineRuntime({ seed: randomSeed() });
-  const sfx = createSfxController();
   const confetti = createConfettiOverlay(document.body);
-  sfx.installUnlockHandlers();
 
   let latestState: GameState | null = null;
   let previousSnapshot: GameState | null = null;
@@ -146,6 +148,7 @@ async function bootstrap(): Promise<void> {
     initialVolume: sfx.getVolume(),
     initialMuted: sfx.isMuted(),
     onVolumeChange: (volume) => {
+      sfx.unlock();
       sfx.setVolume(volume);
       sfx.playMove();
     },
