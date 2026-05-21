@@ -69,12 +69,17 @@ function createMobileTitle(lines: [string, string], modifierClass: string): HTML
   return title;
 }
 
+export type LandingPageOptions = {
+  /** Fired when PLAY is pressed — use to fade the game in under the landing exit. */
+  onPlayPressed?: () => void;
+};
+
 export type LandingPage = {
   root: HTMLElement;
   waitUntilDismissed: () => Promise<void>;
 };
 
-export function createLandingPage(): LandingPage {
+export function createLandingPage(options: LandingPageOptions = {}): LandingPage {
   const root = document.createElement('div');
   root.className = 'landing';
   root.setAttribute('role', 'dialog');
@@ -205,6 +210,7 @@ export function createLandingPage(): LandingPage {
       return;
     }
     playButton.disabled = true;
+    options.onPlayPressed?.();
     root.classList.add('landing--exiting');
 
     if (prefersReducedMotion) {

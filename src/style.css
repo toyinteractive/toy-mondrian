@@ -37,6 +37,16 @@ body {
   width: 100%;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.app-shell--revealed {
+  opacity: 1;
+}
+
+.app-shell--hidden {
+  pointer-events: none;
 }
 
 .game-layout {
@@ -452,13 +462,18 @@ body {
   display: none;
 }
 
-.app-shell--hidden {
-  visibility: hidden;
-  pointer-events: none;
-}
-
 #app:has(.landing) .app-byline {
   display: none;
+}
+
+#app.app--game-reveal .app-byline {
+  display: flex;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+#app.app--game-reveal.app--game-revealed .app-byline {
+  opacity: 1;
 }
 
 /* --- Landing page --- */
@@ -561,10 +576,16 @@ body {
 /* Desktop game view only — hidden on mobile portrait, landscape, and while landing is up */
 .app-brand-logo {
   display: none;
+  opacity: 0;
+  transition: opacity 500ms ease;
 }
 
 #app:not(:has(.landing)) .app-brand-logo {
   display: block;
+}
+
+.app-brand-logo--revealed {
+  opacity: 1;
 }
 
 @media (max-width: 1280px) and (orientation: portrait), (max-width: 1280px) and (orientation: landscape) {
@@ -1124,6 +1145,12 @@ body {
   }
 
   .landing .brand-logo-img {
+    transition: none;
+  }
+
+  .app-shell,
+  #app.app--game-reveal .app-byline,
+  .app-brand-logo {
     transition: none;
   }
 }

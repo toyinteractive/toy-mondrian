@@ -29,9 +29,6 @@ async function bootstrap(): Promise<void> {
     throw new Error('Missing #app root element');
   }
 
-  const landing = createLandingPage();
-  appHost.prepend(landing.root);
-
   const appShell = document.createElement('div');
   appShell.className = 'app-shell app-shell--hidden';
   const gameLayout = document.createElement('div');
@@ -57,6 +54,35 @@ async function bootstrap(): Promise<void> {
   brandLogo.classList.add('app-brand-logo');
 
   appHost.append(brandLogo, appShell, byline);
+
+  const revealGame = (instant: boolean): void => {
+    appHost.classList.add('app--game-reveal');
+    appShell.classList.remove('app-shell--hidden');
+
+    const applyRevealed = (): void => {
+      appHost.classList.add('app--game-revealed');
+      appShell.classList.add('app-shell--revealed');
+      brandLogo.classList.add('app-brand-logo--revealed');
+    };
+
+    if (instant) {
+      applyRevealed();
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(applyRevealed);
+    });
+  };
+
+  const landing = createLandingPage({
+    onPlayPressed: () => {
+      const reducedMotion =
+        typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      revealGame(reducedMotion);
+    },
+  });
+  appHost.prepend(landing.root);
 
   const app = await createPixiApp(canvasContainer);
   canvasContainer.appendChild(app.canvas);
@@ -160,7 +186,6 @@ async function bootstrap(): Promise<void> {
   });
 
   await landing.waitUntilDismissed();
-  appShell.classList.remove('app-shell--hidden');
   requestAnimationFrame(refreshRendererLayout);
   runtime.start();
 }
