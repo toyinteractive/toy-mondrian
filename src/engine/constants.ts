@@ -5,8 +5,25 @@ export const GRID_HEIGHT = 20;
 export const GRID_CELL_COUNT = GRID_WIDTH * GRID_HEIGHT;
 
 export const INITIAL_GRAVITY_MS = 1000;
-export const MIN_GRAVITY_MS = 80;
-export const GRAVITY_ACCELERATION_PER_SECOND_MS = 6;
+/** Original ~2:20 pace — reached at 4:00 on the linear ramp. */
+export const MID_GRAVITY_MS = 160;
+export const GRAVITY_MID_SECONDS = 240;
+/** 6:00 — linear ramp ends here at 6 drops/sec. */
+export const GRAVITY_CAP_SECONDS = 360;
+export const MAX_DROP_RATE = 6;
+
+const START_DROP_RATE = 1000 / INITIAL_GRAVITY_MS;
+
+/** ~167ms at cap — ~48% of the old absolute max speed (80ms). */
+export const MIN_GRAVITY_MS = Math.round(1000 / MAX_DROP_RATE);
+
+/** One linear drop-rate ramp from start → cap; holds after GRAVITY_CAP_SECONDS. */
+export function gravityMsForElapsed(elapsedMs: number): number {
+  const elapsedSec = elapsedMs / 1000;
+  const progress = Math.min(1, elapsedSec / GRAVITY_CAP_SECONDS);
+  const rate = START_DROP_RATE + progress * (MAX_DROP_RATE - START_DROP_RATE);
+  return Math.round(1000 / rate);
+}
 
 export const PASSIVE_SCORE_PER_SECOND = 5;
 export const LINE_CLEAR_BASE_SCORE = 100;

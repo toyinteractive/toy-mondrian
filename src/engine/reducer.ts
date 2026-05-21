@@ -1,9 +1,7 @@
 import { findLenientSpawnY, isValidPosition, willCollideAtOffset } from './collision';
 import {
-  GRAVITY_ACCELERATION_PER_SECOND_MS,
-  INITIAL_GRAVITY_MS,
+  gravityMsForElapsed,
   LINE_CLEAR_BASE_SCORE,
-  MIN_GRAVITY_MS,
   PASSIVE_SCORE_PER_SECOND,
   PIECE_LOCAL_CELLS,
   SPAWN_Y,
@@ -361,18 +359,15 @@ function applyTimeProgression(state: GameState, deltaMs: number): GameState {
   const nextElapsedMs = state.elapsedMs + deltaMs;
   const wholeSecondsElapsed = Math.floor(nextElapsedMs / 1000);
   const newSeconds = wholeSecondsElapsed - state.secondsElapsed;
+  const nextGravity = gravityMsForElapsed(nextElapsedMs);
 
   if (newSeconds <= 0) {
     return {
       ...state,
       elapsedMs: nextElapsedMs,
+      gravityMs: nextGravity,
     };
   }
-
-  const nextGravity = Math.max(
-    MIN_GRAVITY_MS,
-    INITIAL_GRAVITY_MS - wholeSecondsElapsed * GRAVITY_ACCELERATION_PER_SECOND_MS
-  );
 
   return {
     ...state,
