@@ -23,13 +23,6 @@ const LINE_CLEAR_MIN_SCORE_GAIN = 100;
 const VOLUME_STORAGE_KEY = 'toy-mondrian-sfx-volume';
 const DEFAULT_VOLUME = 0.65;
 
-/** Pool sizes — overlapping plays on one element drop sounds on iOS. */
-const POOL_SIZES: Record<SfxId, number> = {
-  move: 6,
-  line: 2,
-  victory: 1,
-};
-
 const SFX_URLS: Record<SfxId, string> = {
   move: moveUrl,
   line: lineUrl,
@@ -54,68 +47,51 @@ function readPersistedVolume(): number {
   return clampVolume(Number.parseFloat(raw));
 }
 
-function configureAudioElement(audio: HTMLAudioElement): void {
-  audio.preload = 'auto';
-  audio.setAttribute('playsinline', '');
-}
-
-type SfxPool = {
-  elements: HTMLAudioElement[];
-  cursor: number;
-};
-
-function createPool(url: string, size: number): SfxPool {
-  const elements = Array.from({ length: size }, () => {
-    const audio = new Audio(url);
-    configureAudioElement(audio);
-    return audio;
-  });
-  return { elements, cursor: 0 };
-}
-
 export function createSfxController(): SfxController {
   let volume = readPersistedVolume();
   let muted = volume <= 0.0001;
   let lastNonZeroVolume = muted ? DEFAULT_VOLUME : volume;
 
-  const pools: Record<SfxId, SfxPool> = {
-    move: createPool(SFX_URLS.move, POOL_SIZES.move),
-    line: createPool(SFX_URLS.line, POOL_SIZES.line),
-    victory: createPool(SFX_URLS.victory, POOL_SIZES.victory),
-  };
+  const audioContext = new AudioContext();
+  const masterGain = audioContext.createGain();
+  masterGain.connect(audioContext.destination);
 
-  const allElements = (): HTMLAudioElement[] => Object.values(pools).flatMap((pool) => pool.elements);
+  const buffers: Partial<Record<SfxId, AudioBuffer>> = {};
+  let buffersReady = false;
+  let buffersPromise: Promise<void> | null = null;
 
-  const applyVolumeToAll = (): void => {
-    for (const audio of allElements()) {
-      audio.volume = volume;
+  const loadBuffers = (): Promise<void> => {
+    if (buffersPromise) {
+      return buffersPromise;
     }
+
+    buffersPromise = (async () => {
+      const entries = Object.entries(SFX_URLS) as [SfxId, string][];
+      await Promise.all(
+        entries.map(async ([id, url]) => {
+          const response = await fetch(url);
+          const data = await response.arrayBuffer();
+          buffers[id] = await audioContext.decodeAudioData(data);
+        })
+      );
+      buffersReady = true;
+    })().catch(() => {
+      buffersPromise = null;
+    });
+
+    return buffersPromise;
   };
 
-  applyVolumeToAll();
+  void loadBuffers();
 
   let unlocked = false;
   let lastMoveAt = 0;
 
-  /** Must call play() synchronously inside the user gesture (iOS Safari). */
-  const primeElement = (audio: HTMLAudioElement): void => {
-    const targetVolume = audio.volume;
-    audio.volume = 0.001;
-    const playPromise = audio.play();
-    if (playPromise === undefined) {
-      audio.volume = targetVolume;
-      return;
-    }
-    void playPromise
-      .then(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.volume = targetVolume;
-      })
-      .catch(() => {
-        audio.volume = targetVolume;
-      });
+  const applyMasterVolume = (): void => {
+    masterGain.gain.setValueAtTime(muted ? 0 : volume, audioContext.currentTime);
   };
+
+  applyMasterVolume();
 
   const unlock = (): void => {
     if (typeof window === 'undefined') {
@@ -123,18 +99,40 @@ export function createSfxController(): SfxController {
       return;
     }
 
+    unlocked = true;
+
     if (muted) {
-      unlocked = true;
       return;
     }
 
-    if (!unlocked) {
-      for (const audio of allElements()) {
-        primeElement(audio);
-      }
+    if (audioContext.state === 'suspended') {
+      void audioContext.resume();
     }
 
-    unlocked = true;
+    void loadBuffers();
+  };
+
+  const playBuffer = (id: SfxId): void => {
+    const buffer = buffers[id];
+    if (!buffer) {
+      return;
+    }
+
+    if (audioContext.state === 'suspended') {
+      void audioContext.resume();
+    }
+
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(masterGain);
+    source.start(0);
+    source.addEventListener(
+      'ended',
+      () => {
+        source.disconnect();
+      },
+      { once: true }
+    );
   };
 
   const play = (id: SfxId): void => {
@@ -142,23 +140,26 @@ export function createSfxController(): SfxController {
       return;
     }
 
-    const pool = pools[id];
-    const audio = pool.elements[pool.cursor];
-    pool.cursor = (pool.cursor + 1) % pool.elements.length;
-
-    audio.volume = volume;
-    if (!audio.paused && audio.currentTime > 0) {
-      audio.pause();
+    if (!buffersReady) {
+      void loadBuffers().then(() => {
+        if (unlocked && !muted && buffersReady) {
+          playBuffer(id);
+        }
+      });
+      return;
     }
-    audio.currentTime = 0;
-    void audio.play().catch(() => {
-      unlocked = false;
-    });
+
+    playBuffer(id);
   };
 
   const onVisibilityChange = (): void => {
-    if (document.visibilityState === 'visible') {
-      unlocked = false;
+    if (document.visibilityState === 'hidden') {
+      void audioContext.suspend();
+      return;
+    }
+
+    if (document.visibilityState === 'visible' && unlocked && !muted) {
+      void audioContext.resume();
     }
   };
 
@@ -188,7 +189,7 @@ export function createSfxController(): SfxController {
       } else {
         muted = true;
       }
-      applyVolumeToAll();
+      applyMasterVolume();
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
       }
@@ -204,7 +205,7 @@ export function createSfxController(): SfxController {
         volume = 0;
         muted = true;
       }
-      applyVolumeToAll();
+      applyMasterVolume();
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
       }
