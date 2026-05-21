@@ -53,6 +53,18 @@ async function bootstrap(): Promise<void> {
 
   const app = await createPixiApp(canvasContainer);
   canvasContainer.appendChild(app.canvas);
+
+  const refreshRendererLayout = (): void => {
+    app.resize();
+  };
+  window.addEventListener('resize', refreshRendererLayout);
+  window.visualViewport?.addEventListener('resize', refreshRendererLayout);
+  for (const query of ['(orientation: landscape)', '(orientation: portrait)'] as const) {
+    window.matchMedia(query).addEventListener('change', refreshRendererLayout);
+  }
+  const layoutObserver = new ResizeObserver(refreshRendererLayout);
+  layoutObserver.observe(canvasContainer);
+  layoutObserver.observe(gameLayout);
   const scene = new MondrianScene(app);
   const runtime = new EngineRuntime({ seed: randomSeed() });
   const sfx = createSfxController();
@@ -131,6 +143,7 @@ async function bootstrap(): Promise<void> {
 
   await landing.waitUntilDismissed();
   appShell.classList.remove('app-shell--hidden');
+  requestAnimationFrame(refreshRendererLayout);
   runtime.start();
 }
 

@@ -941,7 +941,7 @@ body {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1280px) and (orientation: portrait) {
   #app {
     --app-pad-y: 0px;
     --mobile-ui-reserved-height: 244px;
@@ -1049,7 +1049,203 @@ body {
   }
 }
 
-@media (max-width: 460px) {
+@media (max-width: 1280px) and (orientation: landscape) {
+  #app {
+    --app-pad-y: 6px;
+    --layout-max-width: none;
+    padding: var(--app-pad-y) 10px 26px;
+    justify-content: stretch;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .app-shell {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    max-height: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .game-layout {
+    --frame-border: 6px;
+    --frame-padding: 6px;
+    --frame-gap: 6px;
+    --panel-padding: 6px;
+    --download-padding-y: 6px;
+    --download-padding-x: 8px;
+    --download-font-size: 10px;
+    width: min(100%, calc(100vw - 20px));
+    height: 100%;
+    max-height: 100%;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: 'canvas sidebar';
+    align-items: stretch;
+    align-content: stretch;
+    column-gap: var(--frame-gap);
+    row-gap: 0;
+    padding: var(--frame-padding);
+    border: var(--frame-border) solid #111111;
+    background: #111111;
+    box-shadow: 12px 12px 0 rgb(0 0 0 / 10%);
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .canvas-container {
+    grid-area: canvas;
+    width: auto;
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    min-height: 0;
+    min-width: 0;
+    aspect-ratio: 1 / 2;
+    justify-self: center;
+    align-self: stretch;
+    border: 0;
+    box-sizing: border-box;
+  }
+
+  .sidebar {
+    display: block;
+    grid-area: sidebar;
+    width: clamp(128px, 24vw, 200px);
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .ui-layer {
+    display: block;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .hud {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    gap: var(--frame-gap);
+  }
+
+  .hud-panel-score,
+  .hud-panel-time {
+    flex: 0 0 auto;
+    min-height: 48px;
+    border: 2px solid #111111;
+  }
+
+  .hud-panel-score {
+    border-right-width: 1px;
+  }
+
+  .hud-panel-time {
+    border-left-width: 1px;
+  }
+
+  .hud-panel-controls {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 6px;
+    padding: var(--panel-padding);
+    border-width: 2px;
+    overflow: hidden;
+  }
+
+  .hud-led-screen {
+    flex: 0 0 auto;
+    min-height: 44px;
+    max-height: 42%;
+    padding: 6px;
+    align-self: stretch;
+  }
+
+  .hud-controls {
+    flex: 0 0 auto;
+    display: grid;
+    gap: 5px;
+    padding: 0;
+  }
+
+  .hud-control-button {
+    width: 100%;
+    height: auto;
+    min-height: 30px;
+  }
+
+  .hud-label {
+    font-size: clamp(11px, 1.8vw, 14px);
+  }
+
+  .hud-value {
+    font-size: clamp(22px, 4vw, 32px);
+  }
+
+  .hud-next-piece-preview {
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-byline {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    flex-grow: 0;
+    z-index: 5;
+    padding: 3px 0;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1280px) and (orientation: landscape) and (max-height: 480px) {
+  #app {
+    --app-pad-y: 4px;
+    padding: var(--app-pad-y) 8px 24px;
+  }
+
+  .game-layout {
+    --frame-border: 4px;
+    --frame-padding: 4px;
+    --frame-gap: 4px;
+    --panel-padding: 4px;
+    box-shadow: 8px 8px 0 rgb(0 0 0 / 10%);
+  }
+
+  .sidebar {
+    width: clamp(112px, 22vw, 168px);
+  }
+
+  .hud-panel-score,
+  .hud-panel-time {
+    min-height: 40px;
+  }
+
+  .hud-led-screen {
+    min-height: 36px;
+    padding: 4px;
+  }
+
+  .hud-control-button {
+    min-height: 26px;
+  }
+
+  .hud-next-piece-preview {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 1280px) and (orientation: portrait) and (max-width: 460px) {
   #app {
     --mobile-ui-reserved-height: 236px;
   }
