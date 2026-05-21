@@ -1,10 +1,9 @@
 import { GamePhase, type GameState } from '../engine/types';
 import lineUrl from '../assets/sounds/line.wav';
 import moveUrl from '../assets/sounds/move.wav';
-import rotateUrl from '../assets/sounds/rotate.wav';
 import victoryUrl from '../assets/sounds/victory.wav';
 
-type SfxId = 'move' | 'rotate' | 'line' | 'victory';
+type SfxId = 'move' | 'line' | 'victory';
 
 type SfxController = {
   installUnlockHandlers: () => void;
@@ -27,14 +26,12 @@ const DEFAULT_VOLUME = 0.65;
 /** Pool sizes — overlapping plays on one element drop sounds on iOS. */
 const POOL_SIZES: Record<SfxId, number> = {
   move: 6,
-  rotate: 3,
   line: 2,
   victory: 1,
 };
 
 const SFX_URLS: Record<SfxId, string> = {
   move: moveUrl,
-  rotate: rotateUrl,
   line: lineUrl,
   victory: victoryUrl,
 };
@@ -83,7 +80,6 @@ export function createSfxController(): SfxController {
 
   const pools: Record<SfxId, SfxPool> = {
     move: createPool(SFX_URLS.move, POOL_SIZES.move),
-    rotate: createPool(SFX_URLS.rotate, POOL_SIZES.rotate),
     line: createPool(SFX_URLS.line, POOL_SIZES.line),
     victory: createPool(SFX_URLS.victory, POOL_SIZES.victory),
   };
@@ -223,7 +219,7 @@ export function createSfxController(): SfxController {
       play('move');
     },
     playRotate: () => {
-      play('rotate');
+      play('move');
     },
     playLine: () => {
       play('line');
