@@ -207,11 +207,11 @@ export function createLandingPage(options: LandingPageOptions = {}): LandingPage
   };
 
   const bindLogoIntroHandoff = (): void => {
-    const mondrianImg = logo.querySelector('.brand-logo-img--mondrian');
+    const mondrianImg = logo.querySelector<HTMLImageElement>('.brand-logo-img--mondrian');
     mondrianImg?.addEventListener(
       'animationend',
-      (event: AnimationEvent) => {
-        if (event.animationName === 'landing-logo-mondrian-in') {
+      (event) => {
+        if (event instanceof AnimationEvent && event.animationName === 'landing-logo-mondrian-in') {
           finishLogoIntro();
         }
       },

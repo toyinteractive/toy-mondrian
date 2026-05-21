@@ -7,7 +7,8 @@ export function isMobileDevice(): boolean {
     return false;
   }
 
-  if (navigator.userAgentData?.mobile === true) {
+  const uaData = (navigator as Navigator & { userAgentData?: { mobile?: boolean } }).userAgentData;
+  if (uaData?.mobile === true) {
     return true;
   }
 
