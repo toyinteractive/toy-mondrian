@@ -47,8 +47,8 @@ export function createSfxController(): SfxController {
   let lastNonZeroVolume = muted ? DEFAULT_VOLUME : volume;
   const sounds: Record<SfxId, HTMLAudioElement> = {
     move: new Audio(moveUrl),
-    rotate: new Audio(rotateUrl),
-    line: new Audio(lineUrl),
+    rotate: new Audio(lineUrl),
+    line: new Audio(rotateUrl),
     victory: new Audio(victoryUrl),
   };
 
