@@ -465,9 +465,16 @@ body {
 
 .landing {
   --landing-hero-size: 128px;
+  --landing-hero-text-height: calc(var(--landing-hero-size) * 4 - 20px);
+  --landing-toy-height: var(--landing-hero-text-height);
   --landing-instructions-size: 32px;
   --landing-play-size: 64px;
   --landing-tracking: 0.12em;
+  --landing-toy-overlap: 32px;
+  --landing-col-gap: 24px;
+  --landing-row-gap: 20px;
+  --landing-play-title-offset: 5.5rem;
+  --landing-instructions-indent: calc(var(--landing-hero-size) * 0.74);
   position: fixed;
   inset: 0;
   z-index: 20;
@@ -476,7 +483,7 @@ body {
   background: #dcdcdc;
   color: #111111;
   font-family: 'Bebas Neue', 'Inter', sans-serif;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: var(--landing-tracking);
   line-height: 1;
   opacity: 1;
@@ -543,33 +550,38 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 96px 48px 56px;
+  padding: 80px 48px 48px;
   box-sizing: border-box;
   min-height: 0;
 }
 
 .landing-panel {
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: max-content max-content;
   grid-template-rows: auto auto;
-  column-gap: clamp(24px, 4vw, 64px);
-  row-gap: clamp(20px, 3vh, 40px);
+  grid-template-areas:
+    'toy title'
+    'play instructions';
+  column-gap: var(--landing-col-gap);
+  row-gap: var(--landing-row-gap);
   align-items: end;
   justify-content: center;
 }
 
-.landing-hero {
+.landing-col-left,
+.landing-col-right {
   display: contents;
 }
 
 .landing-hero-toy {
-  grid-column: 1;
-  grid-row: 1 / span 2;
-  width: clamp(280px, 36vw, 520px);
-  height: auto;
+  grid-area: toy;
+  height: var(--landing-toy-height);
+  width: auto;
   display: block;
+  justify-self: start;
   align-self: center;
-  justify-self: end;
+  margin-right: calc(-1 * var(--landing-toy-overlap));
+  z-index: 1;
 }
 
 .landing-title {
@@ -577,14 +589,14 @@ body {
   font-size: var(--landing-hero-size);
   letter-spacing: var(--landing-tracking);
   line-height: 1;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .landing-title--desktop {
-  grid-column: 2;
-  grid-row: 1;
+  grid-area: title;
   display: flex;
   flex-direction: column;
+  justify-self: start;
   align-self: center;
 }
 
@@ -598,22 +610,26 @@ body {
 }
 
 .landing-play {
-  grid-column: 1;
-  grid-row: 2;
+  grid-area: play;
   justify-self: start;
-  align-self: end;
-  padding: 12px 48px;
+  align-self: center;
+  width: calc(100% + var(--landing-col-gap) - var(--landing-toy-overlap) + var(--landing-play-title-offset));
+  min-height: calc(var(--landing-instructions-size) * 4 + 1rem);
+  padding: 0 0;
   border: 3px solid #111111;
   background: #fdde06;
   color: #111111;
   font-family: inherit;
   font-size: var(--landing-play-size);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: var(--landing-tracking);
   line-height: 1;
   text-transform: uppercase;
   cursor: pointer;
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .landing-play:hover {
@@ -630,14 +646,15 @@ body {
 }
 
 .landing-instructions {
-  grid-column: 2;
-  grid-row: 2;
+  grid-area: instructions;
   font-size: var(--landing-instructions-size);
   letter-spacing: var(--landing-tracking);
   line-height: 1;
-  font-weight: 700;
+  font-weight: 400;
   text-transform: uppercase;
-  align-self: end;
+  justify-self: start;
+  align-self: center;
+  padding-left: var(--landing-instructions-indent);
 }
 
 .landing-instructions p {
@@ -713,16 +730,27 @@ body {
     align-items: center;
     gap: 24px;
     width: min(92vw, 420px);
+    grid-template-areas: none;
+    grid-template-columns: none;
+    grid-template-rows: none;
   }
 
-  .landing-hero {
+  .landing-col-left,
+  .landing-col-right {
     display: block;
-    position: relative;
     width: 100%;
+  }
+
+  .landing-col-left {
+    position: relative;
   }
 
   .landing-hero-toy {
+    grid-area: unset;
     width: 100%;
+    height: auto;
+    margin-right: 0;
+    z-index: auto;
     display: block;
   }
 
@@ -754,17 +782,21 @@ body {
   }
 
   .landing-play {
-    grid-column: unset;
-    grid-row: unset;
+    grid-area: unset;
     position: absolute;
     left: 50%;
     bottom: 14%;
+    width: auto;
+    margin-top: 0;
     transform: translateX(-50%);
     padding: 8px 32px;
     white-space: nowrap;
   }
 
   .landing-instructions {
+    grid-area: unset;
+    margin-top: 0;
+    padding-left: 0;
     text-align: center;
     width: 100%;
   }

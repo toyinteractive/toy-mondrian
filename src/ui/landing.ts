@@ -37,22 +37,13 @@ export function createLandingPage(): LandingPage {
   const panel = document.createElement('div');
   panel.className = 'landing-panel';
 
-  const hero = document.createElement('div');
-  hero.className = 'landing-hero';
+  const colLeft = document.createElement('div');
+  colLeft.className = 'landing-col-left';
 
   const toy = document.createElement('img');
   toy.className = 'landing-hero-toy';
   toy.src = '/images/handheld-toy.png';
   toy.alt = 'Handheld Mondrian Blocks Toy';
-
-  const titleDesktop = document.createElement('div');
-  titleDesktop.className = 'landing-title landing-title--desktop';
-  for (const line of ['TOY', 'OBJECTS', 'MONDRIAN', 'BLOCKS']) {
-    const span = document.createElement('span');
-    span.className = 'landing-title-line';
-    span.textContent = line;
-    titleDesktop.appendChild(span);
-  }
 
   const titleMobileLeft = document.createElement('div');
   titleMobileLeft.className = 'landing-title landing-title--mobile-left';
@@ -67,7 +58,19 @@ export function createLandingPage(): LandingPage {
   playButton.className = 'landing-play';
   playButton.textContent = 'PLAY';
 
-  hero.append(toy, titleDesktop, titleMobileLeft, titleMobileRight, playButton);
+  colLeft.append(toy, titleMobileLeft, titleMobileRight, playButton);
+
+  const colRight = document.createElement('div');
+  colRight.className = 'landing-col-right';
+
+  const titleDesktop = document.createElement('div');
+  titleDesktop.className = 'landing-title landing-title--desktop';
+  for (const line of ['TOY', 'OBJECTS', 'MONDRIAN', 'BLOCKS']) {
+    const span = document.createElement('span');
+    span.className = 'landing-title-line';
+    span.textContent = line;
+    titleDesktop.appendChild(span);
+  }
 
   const instructions = document.createElement('div');
   instructions.className = 'landing-instructions';
@@ -77,7 +80,8 @@ export function createLandingPage(): LandingPage {
     <p>DOWNLOAD ARTWORK AT END</p>
   `;
 
-  panel.append(hero, instructions);
+  colRight.append(titleDesktop, instructions);
+  panel.append(colLeft, colRight);
   main.append(panel);
 
   const footer = document.createElement('footer');
