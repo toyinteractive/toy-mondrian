@@ -44,7 +44,8 @@ export function createDownloadModal(host: HTMLElement, options: DownloadModalOpt
         </span>
         <span class="download-modal-option-text">
           <span class="download-modal-option-label">Picture</span>
-          <span class="download-modal-option-hint">JPEG · a gorgeous 4K image of your finished artboard</span>
+          <span class="download-modal-option-hint download-modal-option-hint--desktop">JPEG · a gorgeous 4K image of your finished artboard</span>
+          <span class="download-modal-option-hint download-modal-option-hint--mobile">JPEG · share, then tap Save Image to add to Photos</span>
         </span>
       </button>
       <button type="button" class="download-modal-option download-modal-option--vector" data-download-vector>

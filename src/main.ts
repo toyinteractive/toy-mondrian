@@ -8,6 +8,7 @@ import { setupKeyboard } from './ui/keyboard-controller';
 import { setupTouch } from './ui/touch-controller';
 import { exportBoardAs4kJpegBlob } from './ui/board-jpeg-export';
 import { createDownloadModal } from './ui/download-modal';
+import { saveImageBlob } from './ui/save-image';
 import { exportVectorArtFromGameState } from './ui/gallery-export';
 import { setupHud, updateHud } from './ui/hud';
 import { createBrandLogo } from './ui/brand-logo';
@@ -111,7 +112,7 @@ async function bootstrap(): Promise<void> {
         return;
       }
       const blob = await exportBoardAs4kJpegBlob(latestState);
-      triggerDownload(blob, 'toy-mondrian.jpg');
+      await saveImageBlob(blob, 'toy-mondrian.jpg');
     },
   });
 

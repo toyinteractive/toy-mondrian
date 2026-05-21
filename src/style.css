@@ -1529,3 +1529,17 @@ body {
   letter-spacing: 0.02em;
   color: rgb(17 17 17 / 78%);
 }
+
+.download-modal-option-hint--mobile {
+  display: none;
+}
+
+@media (max-width: 1280px) and (orientation: portrait), (max-width: 1280px) and (orientation: landscape) {
+  .download-modal-option-hint--desktop {
+    display: none;
+  }
+
+  .download-modal-option-hint--mobile {
+    display: block;
+  }
+}
