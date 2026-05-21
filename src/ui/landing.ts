@@ -4,7 +4,8 @@ const FADE_MS = 500;
 /** Fallback if animationend does not fire (morph delay 5.35s + 1.05s). */
 const LOGO_INTRO_FALLBACK_MS = 6450;
 
-const ORCHESTRATED_INTRO_MEDIA = '(min-width: 1281px), (max-width: 1280px) and (orientation: landscape)';
+const ORCHESTRATED_INTRO_MEDIA =
+  '(min-width: 1281px), (max-width: 1280px) and (orientation: landscape), (max-width: 1280px) and (orientation: portrait)';
 
 function shouldRunOrchestratedIntro(): boolean {
   if (typeof window === 'undefined') {
@@ -69,15 +70,38 @@ function appendInstructionLines(container: HTMLElement, lines: readonly string[]
   }
 }
 
-function createMobileTitle(lines: [string, string], modifierClass: string): HTMLDivElement {
+function createMobileTitle(lines: [string, string], modifierClass: string, animateClass?: string): HTMLDivElement {
   const title = document.createElement('div');
-  title.className = `landing-title ${modifierClass}`;
+  title.className = `landing-title ${modifierClass}${animateClass ? ` ${animateClass}` : ''}`;
   for (const line of lines) {
     const span = document.createElement('span');
     span.className = 'landing-title-line';
     span.textContent = line;
     title.appendChild(span);
   }
+  return title;
+}
+
+function createMobileMondrianBlocks(): HTMLDivElement {
+  const title = document.createElement('div');
+  title.className = 'landing-title landing-title--mobile-right landing-title--mobile-mondrian-blocks';
+
+  let blockIndex = 0;
+  for (const lineText of ['MONDRIAN', 'BLOCKS']) {
+    const line = document.createElement('span');
+    line.className = 'landing-title-line';
+    for (const char of lineText) {
+      const glyph = document.createElement('span');
+      glyph.className = 'landing-title-char';
+      glyph.textContent = char;
+      glyph.style.setProperty('--landing-block-i', String(blockIndex));
+      glyph.style.setProperty('--landing-block-drift', `${((blockIndex % 3) - 1) * 6}px`);
+      line.appendChild(glyph);
+      blockIndex += 1;
+    }
+    title.appendChild(line);
+  }
+
   return title;
 }
 
@@ -115,8 +139,12 @@ export function createLandingPage(options: LandingPageOptions = {}): LandingPage
   toy.src = '/images/handheld-toy.png';
   toy.alt = 'Handheld Mondrian Blocks Toy';
 
-  const titleMobileLeft = createMobileTitle(['TOY', 'OBJECTS'], 'landing-title--mobile-left');
-  const titleMobileRight = createMobileTitle(['MONDRIAN', 'BLOCKS'], 'landing-title--mobile-right');
+  const titleMobileLeft = createMobileTitle(
+    ['TOY', 'OBJECTS'],
+    'landing-title--mobile-left',
+    'landing-animate-item landing-animate-item--mobile-toy-objects'
+  );
+  const titleMobileRight = createMobileMondrianBlocks();
 
   const playButton = document.createElement('button');
   playButton.type = 'button';
@@ -142,11 +170,11 @@ export function createLandingPage(options: LandingPageOptions = {}): LandingPage
   const instructionsMobile = document.createElement('div');
   instructionsMobile.className =
     'landing-instructions landing-instructions--mobile landing-animate-item landing-animate-item--instructions';
-  instructionsMobile.innerHTML = `
-    <p>SWIPE LEFT <span aria-hidden="true">← →</span> RIGHT TO MOVE</p>
-    <p>TAP TO ROTATE</p>
-    <p>DOWNLOAD ARTWORK AT END</p>
-  `;
+  appendInstructionLines(instructionsMobile, [
+    'SWIPE LEFT <span aria-hidden="true">← →</span> RIGHT TO MOVE',
+    'TAP TO ROTATE',
+    'DOWNLOAD ARTWORK AT END',
+  ]);
 
   colRight.append(titleDesktop, instructionsDesktop, instructionsMobile);
   panel.append(colLeft, colRight);
